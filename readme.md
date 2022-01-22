@@ -50,3 +50,55 @@ CNN 和 RNN 不能够适当的处理图结构的输入，GNN 采⽤在每个节�
 - 图的空域网络，常用于动态图
 - 图的自编码，该模型通常使用无监督学习的方式
 - 图生成网络，因为是生成式网络
+
+### 2.4 目标
+
+GNN 的目标是学习得到一个状态的嵌入向量 hv∈Rs，这个向量包含每个节点的邻居节点信息，其中 hv 表示节点 v 的状态向量，这个向量可以用于产生节点的输出 ov，可以是节点的标签。
+
+### 2.5 原始 GNN 的缺点
+
+- 对不动点使用迭代的方法来更新节点的隐藏状态，效率不高
+- 原始 GNN 使用相同的参数，另外在一些边上可能会存在某些信息特征不能够被有效地考虑进去
+- 如果学习的是节点的向量表示而不是图的表示，使用不动点方法是不妥当的
+
+### 2.6 GNN 的变体
+
+- Spectral Methods
+  - ChebNet
+  - 1st-order model
+  - Sigle Paramet
+  - GCN
+- Non-Spectral Methods
+  - Neural FPs
+  - DCNN
+  - GraphSAGE
+- Graph Attention Networks
+  - GAT
+- Gated Graph Neural Networks
+  - GGNN
+- Graph Long short-term memory
+  - Tree LSTM (Child Sum)
+  - Tree LSTM (N-ary)
+
+### 2.7 GNN 一般框架
+
+- MPNN (结合了 GNN 和 GCN 的方法)
+- NLNN (结合几种 Self-attention 方法)
+- GN (结合 MPNN 和 NLNN 以及某些 GNN 的变体)
+
+### 2.8 GNN 的应用
+
+- 物理系统应用：对现实世界中的物理系统进行建模
+- 化学和生物应用：计算分子指纹、蛋白质结构等等
+- 知识图谱应用：解决跨语言的知识图谱对齐任务
+- 图像任务：视觉推理、语义分割、zero-shot and few-hot learning
+- 文本任务：文本分类、序列标注、机器翻译、关系抽取、文本生成、关系推理
+- 产生式模型：NETGAN、MOLGAN
+- 组合优化： 解决在图上的 NP-Hard 问题，TSP、MSP 问题
+
+### 2.9 GNN 问题
+
+- Shallow Structure
+- Dynamic Graphs
+- Non-Structure Scenarios
+- Scalability

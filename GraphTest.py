@@ -27,3 +27,5 @@ print(nx.closeness_centrality(G))
 print(nx.pagerank(G))
 # HITS
 print(nx.hits(G))
+# DRAW
+nx.draw(G)
