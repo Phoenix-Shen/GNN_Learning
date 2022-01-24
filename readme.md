@@ -146,6 +146,10 @@ input Graph -> GNN blocks -> Transformed Graph -> Classification layer -> Predic
 
 ## 4. Passing messages between parts of the graph
 
+在 3.的基础上，将边的信息传播给节点，将节点的信息传播给边，我们就实现了图连通性传播。详见[A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
+
+## 5. The Graph Neural Network Model -- 第一个 GNN 模型
+
 ## 5. references
 
 [A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
