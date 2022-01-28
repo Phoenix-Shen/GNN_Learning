@@ -1,5 +1,7 @@
 # Graph Neural Network
 
+图的基本概念和 pytorch_geometric 库的使用
+
 ## 1.图
 
 ### 1.1 什么是图
