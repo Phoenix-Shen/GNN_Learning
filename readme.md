@@ -152,6 +152,19 @@ input Graph -> GNN blocks -> Transformed Graph -> Classification layer -> Predic
 
 ## 5. The Graph Neural Network Model -- 第一个 GNN 模型
 
-## 5. references
+## 6. references
 
 [A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
+
+# PyG 安装
+
+1. torch，严格按照[官网](https://pytorch.org/get-started/locally/)来,这个问题应该不大
+2. pyg，按照[官网](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)来，不然出的错比写的代码还多。。
+3. 记得选对 cuda 版本，不然会报错，conda 换清华源好像找不到 torch 1.10.2 的 pyg
+4. 下面是个例子
+
+   ```
+   pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio===0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+
+   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
+   ```
