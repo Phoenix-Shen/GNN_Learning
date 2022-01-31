@@ -62,7 +62,7 @@
 - 图有四个属性：顶点、边、全局信息和连接性
 - 问题在于如何表达连接性，最直接的方法就是:可以使用邻接矩阵来表示，但是这个矩阵会非常大，而且它有很多冗余信息（稀疏矩阵）
 - 邻接矩阵将行列的顺序交换之后是一样的意义，如何能够保证神经网络输入上述两个矩阵，结果不变呢
-- 有一种方法:可以使用邻接列表来表示：详情见[GraphTest](./GraphTest.ipynb)
+- 有一种方法:可以使用邻接列表来表示：详情见[GNNConstruction.ipynb](SimplestGNN\GNNConstruction.ipynb)
 
 ## 2. GNN
 
@@ -71,6 +71,8 @@
 GNN 是对图的所有属性进行可优化的转换，而且能够保留图的对称性
 
 GNN 的输出和输入都是一个图，但是不会改变图的连接性
+
+[Here](GraphIntroduction.ipynb) is the introduction of the Graph
 
 ### 2.2 GNN 的起源
 
@@ -140,19 +142,35 @@ GNN 的目标是学习得到一个状态的嵌入向量 hv∈Rs，这个向量�
 - Non-Structure Scenarios
 - Scalability
 
-## 3. 最简单的 GNN
+## 3. 仓库中的文件
 
-input Graph -> GNN blocks -> Transformed Graph -> Classification layer -> Prediction
+**在摆烂，确实学不来这个东西**
 
-- 在 GNN block 中并没有使用到图的结构信息（连通性等信息）,导致结果并不能完全表示信息
+- The Graph Neural Network
+
+  - 在 GNN block 中并没有使用到图的结构信息（连通性等信息）,导致结果并不能完全表示信息
+
+  - dataflow：input Graph -> GNN blocks -> Transformed Graph -> Classification layer -> Prediction
+
+  - [Here](./SimplestGNN) is the code
+
+- 使用 PyG 进行数据处理
+
+  [Here](./DataHandlingofGraphs.ipynb) is the code
+
+- 使用 PyG 搭建 MessagePassingNetworks
+
+  [Here](./CreatingMessagePassingNetworks.ipynb) is the code
+
+- GCN layer
+
+  [Here](./GraphConvolutionalNetwork) is the code
 
 ## 4. Passing messages between parts of the graph
 
 在 3.的基础上，将边的信息传播给节点，将节点的信息传播给边，我们就实现了图连通性传播。详见[A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
 
-## 5. The Graph Neural Network Model -- 第一个 GNN 模型
-
-## 6. references
+## 5. references
 
 [A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
 
