@@ -32,6 +32,12 @@ class GraphConvolution(nn.Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input: Tensor, adj: Tensor) -> Tensor:
+        """
+        adjacency_matrix[n_nodes,n_nodes] * 
+        (input_features[n_nodes,n_features] * 
+        Weight[n_features,out_features] + 
+        bias[out_features] = [n_features,out_features]
+        """
         support = t.mm(input, self.weight)
         # adj稀疏矩阵在前，dense矩阵在后
         output = t.spmm(adj, support)
