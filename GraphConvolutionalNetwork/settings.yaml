@@ -1,0 +1,17 @@
+cuda: True
+# Dropout rate (1 - keep probability)
+dropout_rate: 0.5
+# weight Decay L2 penalty on parameters
+weight_decay: 5.0e-4
+# learning rate
+lr: 0.01
+# number of epochs to train
+epochs: 1000
+# random seed
+seed: 114514
+# Validate during training pass
+fastmode: False
+# hidden size of GCN
+n_hiddens: 16
+# log_dir for tensorboardx
+log_dir: GraphConvolutionalNetwork\logs

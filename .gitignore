@@ -1,2 +1,6 @@
 # datasets
 datasets/
+# tensorboard logs
+/**/logs
+# Pycache
+/**/__pycache__
