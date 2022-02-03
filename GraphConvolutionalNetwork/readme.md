@@ -4,6 +4,16 @@ PyTorch implementation of Graph Convolutional Networks (GCNs) for semi-supervise
 
 Original code can be found at [THERE](https://github.com/tkipf/pygcn)
 
+## GCN 关键公式
+
+![](./keyEquation.png)
+
+那个 D 是哪里来的？为什么要用到 D？
+
+D 是 A 波浪的对角度矩阵，A 波浪=A+I，I 是单位矩阵，使用 A 波浪的原因是在和特征矩阵相乘的时候计算一个 node 所有邻居特征的加权和，而自己的特征被忽略了，所以加上单位矩阵。
+
+A 是没有经过归一化的矩阵，这样与特征矩阵相乘会改变特征原来的分布，所以要进行一个标准化的处理，首先让 A 的每一行加起来为 1，可以乘以度的矩阵的负一次方也就是 D^-1,进一步的，把 D^-1 拆开与 A 相乘，得到一个对称且归一化的矩阵：D^-0.5AD-0.5，然后才得到我们上面所谓的**关键公式**
+
 # CORA DATASET
 
 - 一共 2708 个样本点，，每个样本点都是一篇科学论文，一共有 8 个类别，类别分别是 1）基于案例；2）遗传算法；3）神经网络；4）概率方法；5）强化学习；6）规则学习；7）理论

@@ -21,6 +21,7 @@ def encode_onehot(labels) -> np.ndarray:
 def normalize(mx: sp.csr_matrix) -> sp.csr_matrix:
     """
     raw-normalize sparse matrix
+    在这里完成了一个D^-1操作
     """
     rowsum = np.array(mx.sum(1))
     r_inv = np.power(rowsum, -1).flatten()
@@ -63,7 +64,7 @@ def load_data(path="./GraphConvolutionalNetwork/data/cora/", dataset="cora") -> 
     adj = adj+adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
     features = normalize(features)
-    adj = normalize(adj+sp.eye(adj.shape[0]))
+    adj = normalize(adj+sp.eye(adj.shape[0]))  # 在这里加sp.eye就是给A加上单位阵I，也就是所谓的A波浪
 
     idx_train = range(140)
     idx_val = range(200, 500)
