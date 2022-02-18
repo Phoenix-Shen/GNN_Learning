@@ -4,6 +4,10 @@ PyTorch implementation of Graph Convolutional Networks (GCNs) for semi-supervise
 
 Original code can be found at [THERE](https://github.com/tkipf/pygcn)
 
+## GCN 的作用
+
+为了处理图结构的数据，类似的方法还有 GNN、DeepWalk、node2vec 等等，GCN 实际上是跟 CNN 的作用一样，是一个特征提取器，但是它处理的对象是图数据，我们可以用这些特征去进行图分类、节点分类、边预测；顺便还能得到图的嵌入表示，用途广泛。
+
 ## GCN 关键公式
 
 ![](./keyEquation.png)

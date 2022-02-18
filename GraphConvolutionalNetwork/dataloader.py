@@ -42,6 +42,7 @@ def load_data(path="./GraphConvolutionalNetwork/data/cora/", dataset="cora") -> 
         f"{path}{dataset}.content", dtype=np.dtype(str))
     # 将特征向量提取出来
     # shape = [num_nodes, 1(node_idx)+feature_size+1(class)]
+    # scr_matrix = compressed sparse row matrix， 按行对矩阵进行压缩
     features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
     # 将类别，也就是标签（label）转换成独热编码如[0,0,0,1,0,0]以便训练
     labels = encode_onehot(idx_features_labels[:, -1])
@@ -57,6 +58,8 @@ def load_data(path="./GraphConvolutionalNetwork/data/cora/", dataset="cora") -> 
     edges = np.array(list_map, dtype=np.int32)
     edges = edges.reshape(edges_unordered.shape)
 
+    # sp.coo_matrix 是最简单的存储方式。采用三个数组row、col和data来保存非零元素的信息。这三个数组的长度
+    # 相同，row保存元素的行、col保存元素的列、data保存元素的值，一般来说coo_matrix主要用来创建矩阵
     adj = sp.coo_matrix((np.ones(edges.shape[0]), (edges[:, 0], edges[:, 1])),
                         shape=(labels.shape[0], labels.shape[0]), dtype=np.float32)
 

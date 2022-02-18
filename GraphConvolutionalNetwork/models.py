@@ -39,7 +39,7 @@ class GraphConvolution(nn.Module):
         bias[out_features] = [n_features,out_features]
         """
         support = t.mm(input, self.weight)
-        # adj稀疏矩阵在前，dense矩阵在后
+        # 使用t.spmm的时候 adj稀疏矩阵在前，dense矩阵在后
         output = t.spmm(adj, support)
         if self.bias is not None:
             return output+self.bias
