@@ -66,11 +66,14 @@ if __name__ == "__main__":
               'loss_val: {:.4f}'.format(loss_val.item()),
               'acc_val: {:.4f}'.format(acc_val.item()),
               'time: {:.4f}s'.format(time.time() - start_time))
-        writer.add_scalar("train_loss", loss_train.item(), epoch)
-        writer.add_scalar("val_loss", loss_val.item(), epoch)
-        writer.add_scalar("train_acc", acc_train.item(), epoch)
-        writer.add_scalar("val_acc", acc_val.item(), epoch)
-
+        # writer.add_scalar("train_loss", loss_train.item(), epoch)
+        # writer.add_scalar("val_loss", loss_val.item(), epoch)
+        # writer.add_scalar("train_acc", acc_train.item(), epoch)
+        # writer.add_scalar("val_acc", acc_val.item(), epoch)
+        writer.add_scalars(
+            "accuracy", {"train_acc": acc_train.item(), "val_acc": acc_val.item()}, epoch)
+        writer.add_scalars(
+            "losses", {"train_loss": loss_train.item(), "val_loss": loss_val.item()}, epoch)
     print("Optimization Finished!")
     print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
     # test

@@ -1,10 +1,10 @@
 cuda: True
 # Dropout rate (1 - keep probability)
-dropout_rate: 0.5
+dropout_rate: 0.4
 # weight Decay L2 penalty on parameters
 weight_decay: 5.0e-4
 # learning rate
-lr: 0.01
+lr: 0.005
 # number of epochs to train
 epochs: 1000
 # random seed

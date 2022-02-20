@@ -142,39 +142,7 @@ GNN 的目标是学习得到一个状态的嵌入向量 hv∈Rs，这个向量�
 - Non-Structure Scenarios
 - Scalability
 
-## 3. 仓库中的文件
-
-**在摆烂，确实学不来这个东西**
-
-- The Graph Neural Network
-
-  - 在 GNN block 中并没有使用到图的结构信息（连通性等信息）,导致结果并不能完全表示信息
-
-  - dataflow：input Graph -> GNN blocks -> Transformed Graph -> Classification layer -> Prediction
-
-  - [Here](./SimplestGNN) is the code
-
-- 使用 PyG 进行数据处理
-
-  [Here](./DataHandlingofGraphs.ipynb) is the code
-
-- 使用 PyG 搭建 MessagePassingNetworks
-
-  [Here](./CreatingMessagePassingNetworks.ipynb) is the code
-
-- GCN layer
-
-  [Here](./GraphConvolutionalNetwork) is the code
-
-## 4. Passing messages between parts of the graph
-
-在 3.的基础上，将边的信息传播给节点，将节点的信息传播给边，我们就实现了图连通性传播。详见[A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
-
-## 5. references
-
-[A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
-
-# PyG 安装
+# 3. PyG 安装
 
 1. torch，严格按照[官网](https://pytorch.org/get-started/locally/)来,这个问题应该不大
 2. pyg，按照[官网](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html)来，不然出的错比写的代码还多。。
@@ -186,3 +154,7 @@ GNN 的目标是学习得到一个状态的嵌入向量 hv∈Rs，这个向量�
 
    pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.10.0+cu113.html
    ```
+
+## 4. references
+
+[A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
