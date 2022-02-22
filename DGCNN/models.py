@@ -1,14 +1,15 @@
 
 # %%
-
-
-from utils import load_settings
 import torch as t
 import torch.nn as nn
 import torch.nn.functional as F
 
 
 class DGCNN(nn.Module):
+    """
+    DCGNN model 类，继承自nn.Module
+    """
+
     def __init__(self, args: dict, output_channels=40) -> None:
         super().__init__()
 
@@ -55,6 +56,9 @@ class DGCNN(nn.Module):
         self.linear3 = nn.Linear(256, output_channels)
 
     def forward(self, x: t.Tensor) -> t.Tensor:
+        """
+        前向传播
+        """
         # input -> x.shape = [batch_size, 3 , num_points]
         x = get_graph_feature(x, k=self.k)
         x = self.conv1(x)
@@ -108,7 +112,7 @@ def knn(x: t.Tensor, k: int) -> t.Tensor:
 
 def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t.Tensor:
     """
-    提取特征
+    提取边的特征
     """
     # extract the batch size and the point numbers
     # x.shape is [batch_size , 3 , num of points]
@@ -124,7 +128,7 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
             idx = knn(x[:, 6:], k=k)
 
     device = t.device("cuda" if cuda else "cpu")
-    # idx_base.shape = [batch_size, 1, 1] 
+    # idx_base.shape = [batch_size, 1, 1]
     idx_base = t.arange(0, batch_size, device=device).view(-1, 1, 1)*num_points
     idx = idx+idx_base
     idx = idx.view(-1)
@@ -138,17 +142,36 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
     # [batch_size , num_points , k , features] 一个点占据K行，对应着包括自己在内的K个近邻点的属性
     feature = feature.view(batch_size, num_points, k, num_dims)
     x = x.view(batch_size, num_points, 1, num_dims).repeat(1, 1, k, 1)
-    # 然后跟X进行concatenate操作
+    # 然后跟X进行concatenate操作 shape= [batch_size , num_points, k ,features*2]
     feature = t.cat((feature-x, x), dim=3).permute(0, 3, 1, 2).contiguous()
     # [batchsize, 2*num_dims, num_points, k]
     return feature
 
+def calculate_loss(pred:t.Tensor,label:t.Tensor,smoothing=True)->t.Tensor:
+    """
+    计算交叉熵损失，如果需要的话，还可以采取标签平滑化
+    """
+    label = label.contiguous().view(-1)
 
-# %% TEST of of the DGCNN model
-args = load_settings(r"C:\Users\ssk\Desktop\GNN\Code\DGCNN\settings.yaml")
-model = DGCNN(args, 40).to("cuda")
+    if smoothing:
+        eps=0.2
+        n_class=pred.size(1)
 
-tensor = t.randn((32, 3, 1024), device="cuda")
+        one_hot=t.zeros_like(pred).scatter(1,label.view(-1,1),1)
+        one_hot=one_hot*(1-eps)+(1-one_hot)*eps/(n_class-1)
+        log_prob = F.log_softmax(pred,dim=1)
+        loss = -(one_hot*log_prob).sum(dim=1).mean()
+    else :
+        loss =F.cross_entropy(pred,label,reduction="mean")
+    
+    return loss
 
-result = model.forward(tensor)
-# %%
+# # %% TEST of of the DGCNN model
+# from utils import load_settings
+# args = load_settings(r"C:\Users\ssk\Desktop\GNN\Code\DGCNN\settings.yaml")
+# model = DGCNN(args, 40).to("cuda")
+
+# tensor = t.randn((32, 3, 1024), device="cuda")
+
+# result = model.forward(tensor)
+# # %%

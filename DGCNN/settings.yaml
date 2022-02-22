@@ -1,5 +1,5 @@
-dataset_dir:
-batch_size: 16
+dataset_dir: C:/Users/ssk/Desktop/GNN/CodeFromGithub/dgcnn.pytorch/data/
+batch_size: 8
 epochs: 250
 # use stochastic gradient descent optimizer?
 use_sgd: True
@@ -18,7 +18,7 @@ dropout: 0.5
 # evaluate the model
 eval: False
 # num of points to use
-num_points: 2048
+num_points: 1024
 # dimension of embeddings
 emb_dims: 1024
 # num of the nearest neighbors to use

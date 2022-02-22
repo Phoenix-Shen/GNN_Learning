@@ -1,7 +1,8 @@
 # %%
 import yaml
+import torch as t
 
-
+# the class is not used
 class IOStream():
     def __init__(self, log_path) -> None:
         self.f = open(log_path, "a")
@@ -28,6 +29,13 @@ def load_settings(settings_dir: str) -> dict:
         print(f"{key}:".ljust(20), str(args[key]).ljust(10))
     return args
 
+
+def set_seed(seed):
+    """
+    设置随机种子
+    """
+    t.manual_seed(seed)
+    t.cuda.manual_seed(seed)
 
 # # %% test
 # settings = load_settings(r"C:\Users\ssk\Desktop\GNN\Code\DGCNN\settings.yaml")
