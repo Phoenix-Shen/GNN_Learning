@@ -158,3 +158,7 @@ GNN 的目标是学习得到一个状态的嵌入向量 hv∈Rs，这个向量�
 ## 4. references
 
 [A Gentle Introduction to Graph Neural Networks](https://staging.distill.pub/2021/gnn-intro/?ref=https://githubhelp.com)
+
+## 5. 遇到的问题
+
+- 使用 plt 绘 3D 图的时候死活不行，改了 python -m pip install traitlets==4.3.3 --force-reinstall 也不行。 [代码在此](DGCNN\data\LoadModelNet40Data.ipynb) 之前使用 traitlets = 5.1.1
