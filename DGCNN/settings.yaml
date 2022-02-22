@@ -1,0 +1,27 @@
+dataset_dir:
+batch_size: 16
+epochs: 250
+# use stochastic gradient descent optimizer?
+use_sgd: True
+# learning rate
+lr: 0.001
+# the momentum of the SGD optimizer
+momentum: 0.9
+# scheduler to use, cos and step
+scheduler: cos
+# use GPU ?
+cuda: True
+# random seed
+seed: 1
+# initial dropout rate
+dropout: 0.5
+# evaluate the model
+eval: False
+# num of points to use
+num_points: 2048
+# dimension of embeddings
+emb_dims: 1024
+# num of the nearest neighbors to use
+k: 20
+# pretrained model path
+model_path: ~
