@@ -6,6 +6,7 @@ from data.dataloader import ModelNet40
 from utils import *
 from torch import optim
 import sklearn.metrics as metrics
+import datetime
 
 
 def train(args: dict) -> None:
@@ -47,6 +48,12 @@ def train(args: dict) -> None:
     else:
         raise NotImplementedError("暂时没有提供cos和step以外的选项")
 
+    if args["model_dir"] is not None:
+        file = t.load(args["model_dir"])
+        model.load_state_dict(file["model"])
+        optimizer.load_state_dict(file["optimizer"])
+
+    set_seed(args["seed"])
     ####################
     # training process #
     ####################
@@ -117,6 +124,7 @@ def train(args: dict) -> None:
             count += batch_size
             test_loss += loss.item()*batch_size
             test_true.append(label.cpu().numpy())
+            test_pred.append(preds.detach().cpu().numpy())
 
         test_true = np.concatenate(test_true)
         test_pred = np.concatenate(test_pred)
@@ -130,8 +138,9 @@ def train(args: dict) -> None:
         print(outstr)
         if test_acc >= best_test_acc:
             best_test_acc = test_acc
-            t.save(model.state_dict(),
-                   'outputs/%s/models/model.t7' % args.exp_name)
+            time = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+            t.save({"model": model.state_dict(), "optimizer": optimizer.state_dict()},
+                   f"./DGCNN/saved_models/model-{time}.pth")
 
 
 if __name__ == "__main__":

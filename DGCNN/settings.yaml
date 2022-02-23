@@ -12,11 +12,10 @@ scheduler: cos
 # use GPU ?
 cuda: True
 # random seed
-seed: 1
+seed: 114514
 # initial dropout rate
 dropout: 0.5
-# evaluate the model
-eval: False
+# eva
 # num of points to use
 num_points: 1024
 # dimension of embeddings
@@ -24,4 +23,4 @@ emb_dims: 1024
 # num of the nearest neighbors to use
 k: 20
 # pretrained model path
-model_path: ~
+model_dir: ~

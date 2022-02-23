@@ -59,34 +59,51 @@ class DGCNN(nn.Module):
         """
         前向传播
         """
+        # 提取特征
         # input -> x.shape = [batch_size, 3 , num_points]
+        # x.shape = [batch_size, 6, num_points , 20]
         x = get_graph_feature(x, k=self.k)
-        x = self.conv1(x)
+        x = self.conv1(x)  # x.shape = [batch_size, 64, num_points, 20]
+        # max Aggregation [batch_size, 64, num_points]
         x1 = x.max(dim=-1, keepdim=False)[0]
 
+        # x.shape = [batch_size, 128, num_points, 20]
         x = get_graph_feature(x1, k=self.k)
-        x = self.conv2(x)
+        x = self.conv2(x)  # x.shape = [batch_size, 64, num_points, 20]
+        # max Aggregation [batch_size, 64, num_points]
         x2 = x.max(dim=-1, keepdim=False)[0]
 
+        # x.shape = [batch_size, 128, num_points, 20]
         x = get_graph_feature(x2, k=self.k)
-        x = self.conv3(x)
+        x = self.conv3(x)  # x.shape = [batch_size, 128, num_points, 20]
+        # max Aggregation [batch_size, 128, num_points]
         x3 = x.max(dim=-1, keepdim=False)[0]
 
+        # x.shape = [batch_size, 256, num_points, 20]
         x = get_graph_feature(x3, k=self.k)
-        x = self.conv4(x)
+        x = self.conv4(x)  # x.shape = [batch_size, 256, num_points, 20]
+        # max Aggregation [batch_size, 256 ,num_points]
         x4 = x.max(dim=-1, keepdim=False)[0]
 
+        # concatenation operation [batch_size, 512, num_points]
         x = t.cat((x1, x2, x3, x4), dim=1)
+        ###################################
 
-        x = self.conv5(x)
+        # 分类器
+        x = self.conv5(x)  # x.shape = [batch_size, emb_dims, num_points]
+        # maxpooling operation [batch_size, emb_dims]
         x1 = F.adaptive_max_pool1d(x, 1).view(x.size(0), -1)
+        # avgpooling operation [batch_size, emb_dims]
         x2 = F.adaptive_avg_pool1d(x, 1).view(x.size(0), -1)
+        # concatenation operation [batch_size, emb_dims*2]
         x = t.cat((x1, x2), 1)
-
+        # linear layer [batch_size ,512 ]
         x = F.leaky_relu(self.bn6(self.linear1(x)), negative_slope=0.2)
         x = self.dp1(x)
+        # linear layer [batch_size ,256 ]
         x = F.leaky_relu(self.bn7(self.linear2(x)), negative_slope=0.2)
         x = self.dp2(x)
+        # linear layer [batch_size ,num_classes ]
         x = self.linear3(x)
 
         return x
@@ -129,6 +146,7 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
 
     device = t.device("cuda" if cuda else "cpu")
     # idx_base.shape = [batch_size, 1, 1]
+    # 通过广播机制，对不同batch的数据加上它们对应的idx，便于之后索引
     idx_base = t.arange(0, batch_size, device=device).view(-1, 1, 1)*num_points
     idx = idx+idx_base
     idx = idx.view(-1)
@@ -138,6 +156,7 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
     # (batch_size, num_points, num_dims)  -> (batch_size*num_points, num_dims) #   batch_size * num_points * k + range(0, batch_size*num_points)
     x = x.transpose(2, 1).contiguous()
     # 拉伸成 [Batch*Num,Features] 的形状，然后再根据下标索引idx选出
+    # feature.shape = []
     feature = x.view(batch_size*num_points, -1)[idx, :]
     # [batch_size , num_points , k , features] 一个点占据K行，对应着包括自己在内的K个近邻点的属性
     feature = feature.view(batch_size, num_points, k, num_dims)
@@ -147,23 +166,24 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
     # [batchsize, 2*num_dims, num_points, k]
     return feature
 
-def calculate_loss(pred:t.Tensor,label:t.Tensor,smoothing=True)->t.Tensor:
+
+def calculate_loss(pred: t.Tensor, label: t.Tensor, smoothing=True) -> t.Tensor:
     """
     计算交叉熵损失，如果需要的话，还可以采取标签平滑化
     """
     label = label.contiguous().view(-1)
 
     if smoothing:
-        eps=0.2
-        n_class=pred.size(1)
+        eps = 0.2
+        n_class = pred.size(1)
 
-        one_hot=t.zeros_like(pred).scatter(1,label.view(-1,1),1)
-        one_hot=one_hot*(1-eps)+(1-one_hot)*eps/(n_class-1)
-        log_prob = F.log_softmax(pred,dim=1)
+        one_hot = t.zeros_like(pred).scatter(1, label.view(-1, 1), 1)
+        one_hot = one_hot*(1-eps)+(1-one_hot)*eps/(n_class-1)
+        log_prob = F.log_softmax(pred, dim=1)
         loss = -(one_hot*log_prob).sum(dim=1).mean()
-    else :
-        loss =F.cross_entropy(pred,label,reduction="mean")
-    
+    else:
+        loss = F.cross_entropy(pred, label, reduction="mean")
+
     return loss
 
 # # %% TEST of of the DGCNN model

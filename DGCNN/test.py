@@ -8,14 +8,6 @@ from data.dataloader import ModelNet40
 from utils import *
 import sklearn.metrics as metrics
 
-
-
-
-
-
-
-
-
 def test(args:dict)->None:
     test_set = ModelNet40(args["dataset_dir"],
                           args["num_points"], partition="test")

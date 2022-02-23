@@ -4,3 +4,6 @@ datasets/
 /**/logs
 # Pycache
 /**/__pycache__
+# models
+*.pth
+*.pkl

@@ -41,6 +41,7 @@ class ModelNet40(Dataset):
         point_cloud = self.data[index][:self.num_points]
         label = self.label[index]
         if self.partition == "train":
+            # np.random.uniform :  从一个均匀分布中随机采样，左闭右开
             xyz1 = np.random.uniform(low=2./3., high=3./2., size=[3])
             xyz2 = np.random.uniform(low=-0.2, high=0.2, size=[3])
             point_cloud = np.add(np.multiply(

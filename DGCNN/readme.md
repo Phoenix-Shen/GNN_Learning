@@ -76,3 +76,5 @@ EdgeConv 考虑了点的坐标、与邻域点的距离，忽视了相邻点之�
 - [dcgnn](https://blog.csdn.net/W1995S/article/details/113747174?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.pc_relevant_paycolumn_v3&spm=1001.2101.3001.4242.1&utm_relevant_index=3)
 
 - [dcgnn 中的 KNN 和 EDGECONV](https://blog.csdn.net/weixin_45482843/category_10835196.html)
+
+- [EdgeConv 代码 TensorFlow 版本详解](https://blog.csdn.net/qq_39426225/article/details/101980690)
