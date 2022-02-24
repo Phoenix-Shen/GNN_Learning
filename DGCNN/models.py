@@ -14,7 +14,6 @@ class DGCNN(nn.Module):
         super().__init__()
 
         self.k = args["k"]
-
         self.bn1 = nn.BatchNorm2d(64)
         self.bn2 = nn.BatchNorm2d(64)
         self.bn3 = nn.BatchNorm2d(128)
@@ -87,6 +86,7 @@ class DGCNN(nn.Module):
 
         # concatenation operation [batch_size, 512, num_points]
         x = t.cat((x1, x2, x3, x4), dim=1)
+
         ###################################
 
         # 分类器
@@ -123,7 +123,7 @@ def knn(x: t.Tensor, k: int) -> t.Tensor:
     # pairwise_distance.shape = [batch_size, num_points, num_points] (broadcast mechanism)
     pairwise_distance = -xx-inner-xx.transpose(2, 1)
     # idx.shape = [batch_size, num_points, K] (selectet K points)
-    idx = pairwise_distance.topk(k=k, dim=-1)[1]
+    idx = pairwise_distance.topk(k=k, dim=-1)[1]  # [1] 意味着取下标而不是取数值
     return idx
 
 
@@ -156,7 +156,7 @@ def get_graph_feature(x: t.Tensor, k: int, idx=None, dim9=False, cuda=True) -> t
     # (batch_size, num_points, num_dims)  -> (batch_size*num_points, num_dims) #   batch_size * num_points * k + range(0, batch_size*num_points)
     x = x.transpose(2, 1).contiguous()
     # 拉伸成 [Batch*Num,Features] 的形状，然后再根据下标索引idx选出
-    # feature.shape = []
+    # feature.shape = [batch_size*num_points*k, features]
     feature = x.view(batch_size*num_points, -1)[idx, :]
     # [batch_size , num_points , k , features] 一个点占据K行，对应着包括自己在内的K个近邻点的属性
     feature = feature.view(batch_size, num_points, k, num_dims)

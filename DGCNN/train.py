@@ -7,6 +7,7 @@ from utils import *
 from torch import optim
 import sklearn.metrics as metrics
 import datetime
+from tensorboardX import SummaryWriter
 
 
 def train(args: dict) -> None:
@@ -54,6 +55,10 @@ def train(args: dict) -> None:
         optimizer.load_state_dict(file["optimizer"])
 
     set_seed(args["seed"])
+    writer = SummaryWriter("./DGCNN/logs")
+    writer.add_graph(model=model, input_to_model=t.randn(
+        (8, 3, args["num_points"]), device=device))
+
     ####################
     # training process #
     ####################
@@ -104,7 +109,11 @@ def train(args: dict) -> None:
                                                                                      train_true, train_pred),
                                                                                  metrics.balanced_accuracy_score(
                                                                                      train_true, train_pred))
+        writer.add_scalar("train_loss", train_loss*1.0/count, epoch)
+        writer.add_scalar("train_acc", metrics.accuracy_score(
+            train_true, train_pred), epoch)
         print(outstr)
+
         ##################
         # Test Procedure #
         ##################
@@ -136,6 +145,9 @@ def train(args: dict) -> None:
                                                                               test_acc,
                                                                               avg_per_class_acc)
         print(outstr)
+        writer.add_scalar("test_loss", test_loss*1.0/count, epoch)
+        writer.add_scalar("test_acc", test_acc, epoch)
+
         if test_acc >= best_test_acc:
             best_test_acc = test_acc
             time = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
