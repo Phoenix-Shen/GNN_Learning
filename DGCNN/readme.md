@@ -22,7 +22,8 @@ EdgeConv 考虑了点的坐标、与邻域点的距离，忽视了相邻点之�
 
 ## Structure
 
-````DGCNN_cls(
+```
+DGCNN_cls(
   (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
   (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
   (bn3): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
@@ -60,8 +61,8 @@ EdgeConv 考虑了点的坐标、与邻域点的距离，忽视了相邻点之�
   (bn7): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
   (dp2): Dropout(p=0.5, inplace=False)
   (linear3): Linear(in_features=256, out_features=40, bias=True)
-)```
-````
+)
+```
 
 ## 杂谈
 

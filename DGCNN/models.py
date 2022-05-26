@@ -5,9 +5,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class DGCNN(nn.Module):
+class DGCNN_Classification(nn.Module):
     """
-    DCGNN model 类，继承自nn.Module
+    DCGNN model 类，用于分类，继承自nn.Module
     """
 
     def __init__(self, args: dict, output_channels=40) -> None:
@@ -195,3 +195,183 @@ def calculate_loss(pred: t.Tensor, label: t.Tensor, smoothing=True) -> t.Tensor:
 
 # result = model.forward(tensor)
 # # %%
+
+
+class TransformNet(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.bn1 = nn.BatchNorm2d(64)
+        self.bn2 = nn.BatchNorm2d(128)
+        self.bn3 = nn.BatchNorm1d(1024)
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(6, 64, kernel_size=1, bias=False),
+            self.bn1,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=1, bias=False),
+            self.bn2,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+
+        self.conv3 = nn.Sequential(
+            nn.Conv1d(128, 1024, kernel_size=1, bias=False),
+            self.bn3,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+
+        self.linear1 = nn.Linear(1024, 512, bias=False)
+        self.bn4 = nn.BatchNorm1d(512)
+        self.linear2 = nn.Linear(512, 256, bias=False)
+        self.bn5 = nn.BatchNorm1d(256)
+
+        self.transform = nn.Linear(256, 3*3)
+
+        nn.init.constant_(self.transform.weight, 0)
+        nn.init.eye_(self.transform.bias.view(3, 3))
+
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        batch_size = x.size(0)
+
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = x.max(dim=-1, keepdim=False)[0]
+
+        x = self.conv3(x)
+        x = x.max(dim=-1, keepdim=False)[0]
+
+        x = F.leaky_relu(self.bn4(self.linear1(x)), negative_slope=0.2)
+        x = F.leaky_relu(self.bn5(self.linear2(x)), negative_slope=0.2)
+
+        x = self.transform(x)
+
+        x = x.view(batch_size, 3, 3)
+        return x
+
+
+class DGCNN_PartSegmentation(nn.Module):
+    def __init__(self, args: dict, seg_num_all) -> None:
+        super().__init__()
+
+        self.seg_num_all = seg_num_all
+        self.k = args["k"]
+
+        self.transform_net = TransformNet()
+
+        self.bn1 = nn.BatchNorm2d(64)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.bn3 = nn.BatchNorm2d(64)
+        self.bn4 = nn.BatchNorm2d(64)
+        self.bn5 = nn.BatchNorm2d(64)
+        self.bn6 = nn.BatchNorm1d(args["emb_dims"])
+        self.bn7 = nn.BatchNorm2d(64)
+        self.bn8 = nn.BatchNorm2d(256)
+        self.bn9 = nn.BatchNorm2d(256)
+        self.bn10 = nn.BatchNorm2d(128)
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(6, 64, kernel_size=1, bias=False),
+            self.bn1,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=1, bias=False),
+            self.bn2,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(64*2, 64, kernel_size=1, bias=False),
+            self.bn3,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv4 = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=1, bias=False),
+            self.bn4,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv5 = nn.Sequential(
+            nn.Conv2d(64*2, 64, kernel_size=1, bias=False),
+            self.bn5,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv6 = nn.Sequential(
+            nn.Conv1d(192, args["emb_dims"], kernel_size=1, bias=False),
+            self.bn6,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv7 = nn.Sequential(
+            nn.Conv1d(16, 64, kernel_size=1, bias=False),
+            self.bn7,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv8 = nn.Sequential(
+            nn.Conv1d(1280, 256, kernel_size=1, bias=False),
+            self.bn8,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.dp1 = nn.Dropout(p=args["droupout"])
+        self.conv9 = nn.Sequential(
+            nn.Conv1d(256, 256, kernel_size=1, bias=False),
+            self.bn9,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.dp2 = nn.Dropout(p=args["droupout"])
+        self.conv10 = nn.Sequential(
+            nn.Conv1d(256, 128, kernel_size=1, bias=False),
+            self.bn10,
+            nn.LeakyReLU(negative_slope=0.2)
+        )
+        self.conv11 = nn.Conv1d(128, self.seg_num_all,
+                                kernel_size=1, bias=False)
+
+    def forward(self, x: t.Tensor, l: t.Tensor) -> t.Tensor:
+        batch_size, num_points = x.size(0), x.size(2)
+
+        x0 = get_graph_feature(x, k=self.k)
+        trans = self.transform_net.forward(x0)
+        x = x.transpose(2, 1)
+        x = t.bmm(x, trans)
+        x = x.transpose(2, 1)
+
+        x = get_graph_feature(x, k=self.k)
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x1 = x.max(dim=-1, keepdim=False)[0]
+
+        x = get_graph_feature(x, k=self.k)
+        x = self.conv3(x)
+        x = self.conv4(x)
+        x2 = x.max(dim=-1, keepdim=False)[0]
+
+        x = get_graph_feature(x, k=self.k)
+        x = self.conv5(x)
+        x3 = x.max(dim=-1, keepdim=False)[0]
+
+        x = t.cat((x1, x2, x3), dim=1)
+
+        x = self.conv6(x)
+        x = x.max(dim=-1, keepdim=True)[0]
+
+        l = l.view(batch_size, -1, 1)
+        l = self.conv7(l)
+
+        x = t.cat((x, l), dim=1)
+        x = x.repeat(1, 1, num_points)
+
+        x = t.cat((x, x1, x2, x3), dim=1)
+
+        x = self.conv8(x)
+        x = self.dp1(x)
+        x = self.conv9(x)
+        x = self.dp2(x)
+        x = self.conv10(x)
+        x = self.conv11(x)
+
+        return x
+
+
+# %% TEST OF PARTSEG MODEL
+inputTensor = t.randn((8,))

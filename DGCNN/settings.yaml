@@ -1,26 +1,42 @@
-dataset_dir: C:/Users/ssk/Desktop/GNN/CodeFromGithub/dgcnn.pytorch/data/
-batch_size: 8
-epochs: 250
-# use stochastic gradient descent optimizer?
-use_sgd: True
-# learning rate
-lr: 0.001
-# the momentum of the SGD optimizer
-momentum: 0.9
-# scheduler to use, cos and step
-scheduler: cos
-# use GPU ?
-cuda: True
-# random seed
-seed: 114514
-# initial dropout rate
-dropout: 0.5
-# eva
-# num of points to use
-num_points: 1024
-# dimension of embeddings
-emb_dims: 1024
-# num of the nearest neighbors to use
-k: 20
-# pretrained model path
-model_dir: ~
+classification:
+  dataset_dir: C:/Users/ssk/Desktop/GNN/CodeFromGithub/dgcnn.pytorch/data/
+  batch_size: 8
+  epochs: 250
+  # use stochastic gradient descent optimizer?
+  use_sgd: True
+  # learning rate
+  lr: 0.001
+  # the momentum of the SGD optimizer
+  momentum: 0.9
+  # scheduler to use, cos and step
+  scheduler: cos
+  # use GPU ?
+  cuda: True
+  # random seed
+  seed: 114514
+  # initial dropout rate
+  dropout: 0.5
+  # eva
+  # num of points to use
+  num_points: 1024
+  # dimension of embeddings
+  emb_dims: 1024
+  # num of the nearest neighbors to use
+  k: 20
+  # pretrained model path
+  model_dir: DGCNN\saved_models\model-2022-02-24 16-39-10.pth
+
+partSegmentation:
+  dataset_dir:
+  batch_size:
+  epochs:
+  dropout:
+  emb_dims:
+  k:
+  seed:
+  num_points:
+  model_dir:
+  scheduler:
+  lr:
+  use_sgd:
+  cuda:

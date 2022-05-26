@@ -1,7 +1,7 @@
 import numpy as np
 import torch as t
 from torch.utils.data import DataLoader
-from models import DGCNN, calculate_loss
+from models import DGCNN_Classification, calculate_loss
 from data.dataloader import ModelNet40
 from utils import *
 from torch import optim
@@ -31,7 +31,7 @@ def train(args: dict) -> None:
 
     device = t.device("cuda" if args["cuda"] else "cpu")
 
-    model = DGCNN(args, 40).to(device)
+    model = DGCNN_Classification(args, 40).to(device)
 
     if args["use_sgd"]:
         optimizer = optim.SGD(model.parameters(
@@ -53,6 +53,7 @@ def train(args: dict) -> None:
         file = t.load(args["model_dir"])
         model.load_state_dict(file["model"])
         optimizer.load_state_dict(file["optimizer"])
+        print(args["model_dir"],"is loaded")
 
     set_seed(args["seed"])
     writer = SummaryWriter("./DGCNN/logs")
@@ -152,9 +153,10 @@ def train(args: dict) -> None:
             best_test_acc = test_acc
             time = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
             t.save({"model": model.state_dict(), "optimizer": optimizer.state_dict()},
-                   f"./DGCNN/saved_models/model-{time}.pth")
+                   f"./DGCNN/saved_models/model_classification-{time}.pth")
 
 
 if __name__ == "__main__":
-    args = load_settings(r"C:\Users\ssk\Desktop\GNN\Code\DGCNN\settings.yaml")
+    args = load_settings(r"C:\Users\ssk\Desktop\GNN\Code\DGCNN\settings.yaml")[
+        "classification"]
     train(args)

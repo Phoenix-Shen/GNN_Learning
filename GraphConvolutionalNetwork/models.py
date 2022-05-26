@@ -36,7 +36,7 @@ class GraphConvolution(nn.Module):
         adjacency_matrix[n_nodes,n_nodes] * 
         (input_features[n_nodes,n_features] * 
         Weight[n_features,out_features]) + 
-        bias[out_features] = [n_features,out_features]
+        bias[out_features] = [n_nodes,out_features]
         """
         support = t.mm(input, self.weight)
         # 使用t.spmm的时候 adj稀疏矩阵在前，dense矩阵在后
